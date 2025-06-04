@@ -40,7 +40,7 @@ class UpdateProductRequest extends FormRequest
 			'sku' => 'string',
 			'name' => 'string',
 			'description' => 'string',
-			'price' => 'decimal'
+			'price' => 'decimal:2'
 		];
 	}
 }

@@ -14,10 +14,11 @@ return new class extends Migration {
 			$table->id();
 			$table->string('slug', 255);
 			$table->string('name', 255);
-			$table->string('description', 255);
+			$table->string('description', 255)->nullable();
 			$table->decimal('commission');
 			// TODO: consignee
 			// TODO: shop
+
 			$table->timestamps();
 		});
 	}

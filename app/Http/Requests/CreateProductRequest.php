@@ -40,7 +40,7 @@ class CreateProductRequest extends FormRequest
 			'sku' => 'required|string',
 			'name' => 'required|string',
 			'description' => 'required|string',
-			'price' => 'required|decimal'
+			'price' => 'required|decimal:2'
 		];
 	}
 }
