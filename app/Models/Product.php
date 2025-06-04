@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
 	protected $fillable = [
-		'sku'
+		'sku',
+		'name',
+		'description',
+		'price'
+		// TODO: 'consignment',
+		// TODO: 'shop'
 	];
 }

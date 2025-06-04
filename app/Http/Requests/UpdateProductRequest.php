@@ -37,7 +37,10 @@ class UpdateProductRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'sku' => ['required', 'string']
+			'sku' => 'string',
+			'name' => 'string',
+			'description' => 'string',
+			'price' => 'decimal'
 		];
 	}
 }
