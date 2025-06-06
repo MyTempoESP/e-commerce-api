@@ -6,16 +6,20 @@ use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 
 use App\Models\Product;
+use App\Models\Shop;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProductController extends Controller
 {
 
+	private $shops;
+
 	private $products;
 
-	public function __construct(Product $product)
+	public function __construct(Product $product, Shop $shop)
 	{
 		$this->products = $product;
+		$this->shops = $shop;
 	}
 
 	/**
@@ -42,6 +46,7 @@ class ProductController extends Controller
 	public function store(CreateProductRequest $request)
 	{
 		$data = $request->all();
+
 		$this->products->create($data);
 
 		return response()->json([

@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Address extends Model
 {
 	protected $fillable = [
-		'sku',
-		'name',
-		'image',
-		'description',
-		'price',
-		'shop_id'
+		'street_address',
+		'locality',
+		'region',
+		'postal_code',
+		'country'
 	];
 
 	public function shop()
@@ -20,8 +19,8 @@ class Product extends Model
 		return $this->belongsTo(Shop::class);
 	}
 
-	public function category()
+	public function consignee()
 	{
-		return $this->belongsTo(Category::class);
+		return $this->belongsTo(Consignee::class);
 	}
 }

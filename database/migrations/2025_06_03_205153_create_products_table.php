@@ -4,6 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Models\Category;
+use App\Models\Shop;
+use App\Models\Sku;
+
 return new class extends Migration {
 	/**
 	 * Run the migrations.
@@ -13,13 +17,12 @@ return new class extends Migration {
 		Schema::create('products', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 255);
-			$table->string('sku', 255); // sku
-			$table->string('description', 255);
+			$table->string('description', 255)->nullable();
+			$table->string('image', 255)->nullable();
 			$table->decimal('price');
-			// NOTE: estoque calculado automaticamente com base
-			// na count de um determinado sku.
-			// TODO: consignment
-			// TODO: shop
+			$table->foreignIdFor(Category::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Shop::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Sku::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
 		});
 	}

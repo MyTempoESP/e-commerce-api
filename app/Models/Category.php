@@ -4,20 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Consignment extends Model
+class Category extends Model
 {
 	protected $fillable = [
-		'slug',
 		'name',
 		'description',
-		'commission',
-		'consignee_id',
 		'shop_id'
 	];
 
-	public function consignee()
+	public function product()
 	{
-		return $this->belongsTo(Consignee::class);
+		return $this->hasMany(Product::class);
 	}
 
 	public function shop()

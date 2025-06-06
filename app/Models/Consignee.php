@@ -13,4 +13,14 @@ class Consignee extends Model
 		'document',
 		'address'
 	];
+
+	public function address()
+	{
+		return $this->hasOne(Address::class);
+	}
+
+	public function consignments()
+	{
+		return $this->hasMany(Consignment::class);
+	}
 }

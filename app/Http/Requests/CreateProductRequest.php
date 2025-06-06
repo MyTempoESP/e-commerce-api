@@ -39,8 +39,9 @@ class CreateProductRequest extends FormRequest
 		return [
 			'sku' => 'required|string',
 			'name' => 'required|string',
-			'description' => 'required|string',
-			'price' => 'required|decimal:2'
+			'description' => 'max:255',
+			'price' => 'required|decimal:2',
+			'image' => 'string'
 		];
 	}
 }
