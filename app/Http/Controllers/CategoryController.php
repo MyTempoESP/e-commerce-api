@@ -2,27 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shop;
-
-use App\Http\Requests\CreateShopRequest;
-use App\Http\Requests\UpdateShopRequest;
-
-use App\Models\Address;
-use Illuminate\Support\Facades\DB;
-
-use Illuminate\Support\Str;
-
+use App\Http\Requests\CreateCategoryRequest;
+use App\Models\Category;
+use DB;
 use Exception;
+use Illuminate\Http\Request;
+use Str;
 
-class ShopController extends Controller
+class CategoryController extends Controller
 {
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index()
 	{
-		// TODO: learn dependency injection
-		return Shop::all()->toResourceCollection();
+		return Category::all()->toResourceCollection();
 	}
 
 	/**
@@ -36,31 +30,25 @@ class ShopController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(CreateShopRequest $request)
+	public function store(CreateCategoryRequest $request)
 	{
 		try {
 			DB::transaction(function () use ($request) {
 				$validated = $request->validated();
 
-				$address = Address::create($validated['address']);
-
-				$shop = Shop::create([
+				$category = Category::create([
 					'name' => $validated['name'],
 					'slug' => Str::slug($validated['name']),
-
-					'manager_first_name' => $validated['manager_first_name'],
-					'manager_last_name' => $validated['manager_last_name'],
-
-					'phone' => $validated['phone'],
-					'address_id' => $address->id
+					'description' => $validated['description'] ?? '',
+					'shop_id' => $validated['shop_id']
 				]);
 
-				return $shop;
+				return $category;
 			});
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Estabelecimento criado com sucesso!'
+				'message' => 'Categoria criada com sucesso!'
 			], 201);
 		} catch (Exception $e) {
 			return response()->json([
@@ -89,9 +77,9 @@ class ShopController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(UpdateShopRequest $request, string $id)
+	public function update(Request $request, string $id)
 	{
-		// TODO
+		//
 	}
 
 	/**

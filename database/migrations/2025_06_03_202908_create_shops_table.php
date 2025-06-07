@@ -15,12 +15,10 @@ return new class extends Migration {
 		Schema::create('shops', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 255);
+			$table->string('slug', 255);
 			$table->string('manager_first_name', 255);
 			$table->string('manager_last_name', 255);
 			$table->string('phone', 255);
-			//$table->string('image', 255)->nullable();
-			// NOTE: 'document': cnpj
-			//$table->string('document', 14);
 			$table->foreignIdFor(Address::class)->constrained();
 			$table->timestamps();
 		});

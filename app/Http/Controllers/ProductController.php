@@ -7,27 +7,20 @@ use App\Http\Requests\UpdateProductRequest;
 
 use App\Models\Product;
 use App\Models\Shop;
+use App\Models\Sku;
+use DB;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Str;
 
 class ProductController extends Controller
 {
-
-	private $shops;
-
-	private $products;
-
-	public function __construct(Product $product, Shop $shop)
-	{
-		$this->products = $product;
-		$this->shops = $shop;
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index()
 	{
-		$products = $this->products->all();
+		$products = Product::all();
 
 		return $products->toResourceCollection();
 	}
@@ -45,14 +38,52 @@ class ProductController extends Controller
 	 */
 	public function store(CreateProductRequest $request)
 	{
-		$data = $request->all();
+		try {
+			DB::transaction(function () use ($request) {
+				$validated = $request->validated();
 
-		$this->products->create($data);
+				$sku = Sku::firstOrCreate(
+					[
+						'code' => $validated['sku_code'],
+						'shop_id' => $validated['shop_id']
+					],
+					[
+						'price' => $validated['price'],
+						'quantity' => 0,
 
-		return response()->json([
-			'success' => true,
-			'message' => 'Produto criado com sucesso!'
-		]);
+						'name' => $validated['name'],
+						'slug' => Str::slug($validated['name']),
+						'description' => $validated['description'] ?? '',
+						'image' => $validated['image'] ?? '',
+
+						'category_id' => $validated['category_id']
+					]
+				);
+
+				$sku->lockForUpdate();
+
+				$sku->quantity = $sku->quantity + $validated['quantity'];
+
+				$sku->save();
+
+				for ($i = 0; $i < $validated['quantity']; $i++) {
+					Product::create([
+						'sku_id' => $sku->id,
+						// qr_code
+					]);
+				}
+			});
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Produto criado com sucesso!'
+			], 201);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'message' => $e->getMessage()
+			], 500);
+		}
 	}
 
 	/**
@@ -60,7 +91,7 @@ class ProductController extends Controller
 	 */
 	public function show(string $id)
 	{
-		$product = $this->products->findOrFail($id);
+		$product = Product::findOrFail($id);
 
 		return $product->toResource();
 	}
@@ -81,7 +112,7 @@ class ProductController extends Controller
 		$data = $request->all();
 
 		try {
-			$product = $this->products->findOrFail($id);
+			$product = Product::findOrFail($id);
 		} catch (ModelNotFoundException) {
 			return response()->json([
 				'success' => false,
@@ -103,7 +134,7 @@ class ProductController extends Controller
 	public function destroy(string $id)
 	{
 		try {
-			$product = $this->products->findOrFail($id);
+			$product = Product::findOrFail($id);
 		} catch (ModelNotFoundException) {
 			return response()->json([
 				'success' => false,

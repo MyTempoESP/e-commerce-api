@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use App\Models\Category;
-use App\Models\Shop;
+use App\Models\Consignment;
 use App\Models\Sku;
 
 return new class extends Migration {
@@ -14,10 +13,12 @@ return new class extends Migration {
 	 */
 	public function up(): void
 	{
-		Schema::create('products', function (Blueprint $table) {
+		Schema::create('consignment_sku', function (Blueprint $table) {
 			$table->id();
+			$table->foreignIdFor(Consignment::class)->constrained()->onDelete('cascade');
 			$table->foreignIdFor(Sku::class)->constrained()->onDelete('cascade');
-			// qr code
+			$table->decimal('price', 8, 2);
+			$table->integer('quantity'); // deduct from Sku.quantity
 			$table->timestamps();
 		});
 	}
@@ -27,6 +28,6 @@ return new class extends Migration {
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('products');
+		Schema::dropIfExists('consigment_sku');
 	}
 };

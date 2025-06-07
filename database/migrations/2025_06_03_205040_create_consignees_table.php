@@ -15,11 +15,10 @@ return new class extends Migration {
 	{
 		Schema::create('consignees', function (Blueprint $table) {
 			$table->id();
-			$table->string('name', 255);
+			$table->string('first_name', 255);
+			$table->string('last_name', 255);
 			$table->string('email', 255);
 			$table->string('phone', 255);
-			// NOTE: 'document': cpf ou cnpj
-			//$table->string('document', 14);
 			$table->foreignIdFor(Shop::class)->constrained()->onDelete('cascade');
 			$table->foreignIdFor(Address::class)->constrained();
 			$table->timestamps();

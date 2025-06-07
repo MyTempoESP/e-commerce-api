@@ -22,11 +22,10 @@ class UpdateShopRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name',
-			'email|email',
-			'phone',
-			'document',
-			'address'
+			'name' => 'string',
+			'manager_first_name' => 'string',
+			'manager_last_name' => 'string',
+			'phone' => 'string',
 		];
 	}
 }

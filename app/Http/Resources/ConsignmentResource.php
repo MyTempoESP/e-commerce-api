@@ -15,10 +15,8 @@ class ConsignmentResource extends JsonResource
 	public function toArray(Request $request): array
 	{
 		return [
-			'slug' => $this->slug,
+			'id' => $this->id,
 			'name' => $this->name,
-			'description' => $this->description,
-			'commission' => $this->commission
 		];
 	}
 }

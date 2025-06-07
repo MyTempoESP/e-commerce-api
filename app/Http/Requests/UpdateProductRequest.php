@@ -37,11 +37,10 @@ class UpdateProductRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'sku' => 'string',
 			'name' => 'string',
-			'description' => 'string',
 			'price' => 'decimal:2',
-			'image' => 'string'
+			'image' => 'string', // url
+			'description' => 'max:300'
 		];
 	}
 }

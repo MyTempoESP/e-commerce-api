@@ -10,17 +10,23 @@ class Consignee extends Model
 		'name',
 		'email',
 		'phone',
-		'document',
-		'address'
+
+		'shop_id',
+		'address_id'
 	];
 
-	public function address()
+	public function shop()
 	{
-		return $this->hasOne(Address::class);
+		return $this->belongsTo(Shop::class);
 	}
 
 	public function consignments()
 	{
-		return $this->hasMany(Consignment::class);
+		return $this->belongsTo(Consignment::class);
+	}
+
+	public function address()
+	{
+		return $this->belongsTo(Address::class);
 	}
 }

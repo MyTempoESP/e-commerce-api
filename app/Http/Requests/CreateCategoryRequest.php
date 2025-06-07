@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateShopRequest extends FormRequest
+class CreateCategoryRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,15 +23,8 @@ class CreateShopRequest extends FormRequest
 	{
 		return [
 			'name' => 'required|string',
-			'manager_first_name' => 'required|string',
-			'manager_last_name' => 'required|string',
-			'phone' => 'required|string',
-
-			'address.street_address' => 'required|string',
-			'address.locality' => 'required|string',
-			'address.region' => 'required|string',
-			'address.country' => 'required|string',
-			'address.postal_code' => 'required|string'
+			'description' => 'max:300',
+			'shop_id' => 'required',
 		];
 	}
 }

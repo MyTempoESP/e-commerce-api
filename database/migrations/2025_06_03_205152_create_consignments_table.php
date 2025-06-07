@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 use App\Models\Consignee;
+use App\Models\Address;
 use App\Models\Shop;
 
 return new class extends Migration {
@@ -15,9 +16,13 @@ return new class extends Migration {
 	{
 		Schema::create('consignments', function (Blueprint $table) {
 			$table->id();
+			$table->string('name', 255);
 			$table->string('slug', 255); // autogerado
-			$table->decimal('fixed_commission', 8, 2)->default('0.00');
-			$table->decimal('variable_commission', 8, 2)->default('0.00');
+			$table->decimal('commission', 8, 2)->default('0.00');
+			$table->enum('commission_type', [
+				'fixed',
+				'variable'
+			])->default('fixed');
 			$table->enum('status', [
 				'rascunho',
 				'pendente separação',
@@ -25,9 +30,9 @@ return new class extends Migration {
 				'em trânsito',
 				'dest. conferido'
 			])->default('rascunho');
-			$table->
 			$table->foreignIdFor(Consignee::class)->constrained()->onDelete('cascade');
-			$table->foreignIdFor(Shop::class)->constrained();
+			$table->foreignIdFor(Shop::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Address::class)->constrained();
 			$table->timestamps();
 		});
 	}

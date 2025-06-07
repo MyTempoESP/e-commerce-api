@@ -37,11 +37,17 @@ class CreateProductRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'sku' => 'required|string',
-			'name' => 'required|string',
-			'description' => 'max:255',
+			'sku_code' => 'required|string|max:255',
 			'price' => 'required|decimal:2',
-			'image' => 'string'
+
+			'shop_id' => 'required',
+			'category_id' => 'required',
+
+			'name' => 'required|string',
+			'image' => 'string', // url
+			'description' => 'max:300',
+
+			'quantity' => 'required|integer'
 		];
 	}
 }

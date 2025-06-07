@@ -14,13 +14,18 @@ class Address extends Model
 		'country'
 	];
 
+	public function consignment()
+	{
+		return $this->hasOne(Consignment::class);
+	}
+
 	public function shop()
 	{
-		return $this->belongsTo(Shop::class);
+		return $this->hasOne(Shop::class);
 	}
 
 	public function consignee()
 	{
-		return $this->belongsTo(Consignee::class);
+		return $this->hasOne(Consignee::class);
 	}
 }

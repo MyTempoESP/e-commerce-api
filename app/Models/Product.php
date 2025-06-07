@@ -7,21 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
 	protected $fillable = [
-		'sku',
-		'name',
-		'image',
-		'description',
-		'price',
-		'shop_id'
+		'sku_id',
 	];
 
-	public function shop()
+	public function sku()
 	{
-		return $this->belongsTo(Shop::class);
-	}
-
-	public function category()
-	{
-		return $this->belongsTo(Category::class);
+		$this->belongsTo(Sku::class);
 	}
 }

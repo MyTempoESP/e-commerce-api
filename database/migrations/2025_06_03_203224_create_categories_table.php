@@ -15,7 +15,8 @@ return new class extends Migration {
 		Schema::create('categories', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 255);
-			$table->string('description')->nullable();
+			$table->string('slug', 255);
+			$table->text('description')->nullable();
 			$table->foreignIdFor(Shop::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
 		});

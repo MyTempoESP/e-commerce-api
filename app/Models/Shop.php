@@ -8,15 +8,16 @@ class Shop extends Model
 {
 	protected $fillable = [
 		'name',
-		'email',
+		'slug',
+		'manager_first_name',
+		'manager_last_name',
 		'phone',
-		'document',
-		'address'
+		'address_id'
 	];
 
-	public function products()
+	public function skus()
 	{
-		return $this->hasMany(Product::class);
+		return $this->hasMany(Sku::class);
 	}
 
 	public function consignments()
@@ -32,6 +33,6 @@ class Shop extends Model
 	// NOTE: possibly many?
 	public function address()
 	{
-		return $this->hasOne(Address::class);
+		return $this->belongsTo(Address::class);
 	}
 }
