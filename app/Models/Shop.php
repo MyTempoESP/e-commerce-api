@@ -12,7 +12,8 @@ class Shop extends Model
 		'manager_first_name',
 		'manager_last_name',
 		'phone',
-		'address_id'
+		'address_id',
+		'user_id'
 	];
 
 	public function skus()

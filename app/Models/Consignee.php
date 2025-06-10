@@ -8,11 +8,11 @@ class Consignee extends Model
 {
 	protected $fillable = [
 		'name',
-		'email',
 		'phone',
 
 		'shop_id',
-		'address_id'
+		'address_id',
+		'user_id'
 	];
 
 	public function user()

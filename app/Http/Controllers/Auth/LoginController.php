@@ -18,6 +18,8 @@ class LoginController extends Controller
 
 		if (Auth::attempt($credentials)) {
 
+			$request->session()->regenerate();
+
 			$user = Auth::user();
 
 			return response()->json([
@@ -34,6 +36,10 @@ class LoginController extends Controller
 	public function logout(Request $request)
 	{
 		Auth::logout();
+
+		$request->session()->invalidate();
+
+		$request->session()->regenerateToken();
 
 		return response()->json([
 			'success' => true

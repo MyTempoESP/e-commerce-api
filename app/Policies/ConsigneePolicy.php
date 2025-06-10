@@ -37,7 +37,7 @@ class ConsigneePolicy
 	 */
 	public function create(User $user): bool
 	{
-		return false;
+		return $user->shop()->exists();
 	}
 
 	/**

@@ -16,9 +16,7 @@ return new class extends Migration {
 	{
 		Schema::create('consignees', function (Blueprint $table) {
 			$table->id();
-			$table->string('first_name', 255);
-			$table->string('last_name', 255);
-			$table->string('email', 255);
+			$table->string('name', 255);
 			$table->string('phone', 255);
 			$table->foreignIdFor(Shop::class)->constrained()->onDelete('cascade');
 			$table->foreignIdFor(Address::class)->constrained();

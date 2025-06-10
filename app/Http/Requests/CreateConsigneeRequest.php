@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateShopRequest extends FormRequest
+class CreateConsigneeRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -23,10 +23,9 @@ class CreateShopRequest extends FormRequest
 	{
 		return [
 			'name' => 'required|string',
-			'manager_first_name' => 'required|string',
-			'manager_last_name' => 'required|string',
 			'phone' => 'required|string',
-			'user_id' => 'required|integer',
+			'email' => 'required|string',
+			'cpf' => 'required|string',
 
 			'address.street_address' => 'required|string',
 			'address.locality' => 'required|string',

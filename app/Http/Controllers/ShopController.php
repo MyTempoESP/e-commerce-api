@@ -8,6 +8,8 @@ use App\Http\Requests\CreateShopRequest;
 use App\Http\Requests\UpdateShopRequest;
 
 use App\Models\Address;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -49,6 +51,8 @@ class ShopController extends Controller
 
 				$address = Address::create($validated['address']);
 
+				$user = User::findOrFail($validated['user_id']);
+
 				$shop = Shop::create([
 					'name' => $validated['name'],
 					'slug' => Str::slug($validated['name']),
@@ -57,7 +61,8 @@ class ShopController extends Controller
 					'manager_last_name' => $validated['manager_last_name'],
 
 					'phone' => $validated['phone'],
-					'address_id' => $address->id
+					'address_id' => $address->id,
+					'user_id' => $user->id
 				]);
 
 				return $shop;
