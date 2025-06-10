@@ -10,7 +10,9 @@ use App\Models\Shop;
 use App\Models\Sku;
 use DB;
 use Exception;
+use Gate;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 use Str;
 
 class ProductController extends Controller
@@ -20,7 +22,10 @@ class ProductController extends Controller
 	 */
 	public function index()
 	{
-		$products = Product::all();
+		Gate::authorize('viewAny', Product::class);
+
+		$shop = Auth::user()->shop;
+		$products = $shop->products;
 
 		return $products->toResourceCollection();
 	}
@@ -36,16 +41,21 @@ class ProductController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
+
 	public function store(CreateProductRequest $request)
 	{
+		Gate::authorize('create', Product::class);
+
 		try {
 			DB::transaction(function () use ($request) {
 				$validated = $request->validated();
 
+				$shop = Auth::user()->shop;
+
 				$sku = Sku::firstOrCreate(
 					[
 						'code' => $validated['sku_code'],
-						'shop_id' => $validated['shop_id']
+						'shop_id' => $shop->id
 					],
 					[
 						'price' => $validated['price'],
@@ -93,6 +103,8 @@ class ProductController extends Controller
 	{
 		$product = Product::findOrFail($id);
 
+		Gate::authorize('view', $product);
+
 		return $product->toResource();
 	}
 
@@ -109,23 +121,6 @@ class ProductController extends Controller
 	 */
 	public function update(UpdateProductRequest $request, string $id)
 	{
-		$data = $request->all();
-
-		try {
-			$product = Product::findOrFail($id);
-		} catch (ModelNotFoundException) {
-			return response()->json([
-				'success' => false,
-				'message' => 'Produto não encontrado!'
-			]);
-		}
-
-		$product->update($data);
-
-		return response()->json([
-			'success' => true,
-			'message' => 'Produto atualizado com sucesso!'
-		]);
 	}
 
 	/**
@@ -133,20 +128,5 @@ class ProductController extends Controller
 	 */
 	public function destroy(string $id)
 	{
-		try {
-			$product = Product::findOrFail($id);
-		} catch (ModelNotFoundException) {
-			return response()->json([
-				'success' => false,
-				'message' => 'Produto não encontrado!'
-			]);
-		}
-
-		$product->delete();
-
-		return response()->json([
-			'success' => true,
-			'message' => 'Produto deletado com sucesso!'
-		]);
 	}
 }

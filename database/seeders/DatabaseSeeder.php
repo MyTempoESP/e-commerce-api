@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Administrator;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,6 +22,10 @@ class DatabaseSeeder extends Seeder
 			'email' => 'admin@exemplo.com',
 			'email_verified_at' => now(),
 			'password' => Hash::make('admin')
+		]);
+
+		Administrator::create([
+			'user_id' => User::first()->id
 		]);
 	}
 }

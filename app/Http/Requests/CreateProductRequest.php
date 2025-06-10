@@ -40,7 +40,6 @@ class CreateProductRequest extends FormRequest
 			'sku_code' => 'required|string|max:255',
 			'price' => 'required|decimal:2',
 
-			'shop_id' => 'required',
 			'category_id' => 'required',
 
 			'name' => 'required|string',

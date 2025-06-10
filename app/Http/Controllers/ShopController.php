@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateShopRequest;
 
 use App\Models\Address;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 use Illuminate\Support\Str;
 
@@ -21,6 +22,8 @@ class ShopController extends Controller
 	 */
 	public function index()
 	{
+		Gate::authorize('viewAny', Shop::class);
+
 		// TODO: learn dependency injection
 		return Shop::all()->toResourceCollection();
 	}
@@ -38,6 +41,8 @@ class ShopController extends Controller
 	 */
 	public function store(CreateShopRequest $request)
 	{
+		Gate::authorize('create', Shop::class);
+
 		try {
 			DB::transaction(function () use ($request) {
 				$validated = $request->validated();
