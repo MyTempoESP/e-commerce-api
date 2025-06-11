@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PickupLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -16,14 +18,44 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
-	Route::resource('products', ProductController::class);
-	Route::resource('categories', CategoryController::class);
-	Route::resource('consignees', ConsigneeController::class);
-	Route::resource('shops', ShopController::class);
+	Route::get(
+		'/perms/admin',
+		[PermissionController::class, 'admin']
+	);
+
+	Route::get(
+		'/perms/estabelecimento',
+		[PermissionController::class, 'shop']
+	);
+
+	Route::get(
+		'/perms/monitor',
+		[PermissionController::class, 'consignee']
+	);
+
+	Route::get(
+		'/perms/level',
+		[PermissionController::class, 'accessLevel']
+	);
 
 	Route::post(
-		'/shops/{shop}/consignments/{consignment}/products',
+		'/estabelecimentos/{shop}/remessas/{consignment}/produtos',
 		[ConsignmentController::class, 'addProduct'],
+	);
+
+	Route::post(
+		'/estabelecimentos',
+		[ShopController::class, 'store']
+	);
+
+	Route::post(
+		'/pontos',
+		[PickupLocationController::class, 'store']
+	);
+
+	Route::get(
+		'/pontos',
+		[PickupLocationController::class, 'index'],
 	);
 });
 

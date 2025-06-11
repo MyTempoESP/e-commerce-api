@@ -13,9 +13,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 use Exception;
+use Illuminate\Validation\ValidationException;
 
 class ShopController extends Controller
 {
@@ -45,39 +47,64 @@ class ShopController extends Controller
 	{
 		Gate::authorize('create', Shop::class);
 
-		try {
-			DB::transaction(function () use ($request) {
-				$validated = $request->validated();
+		DB::transaction(function () use ($request) {
+			$validated = $request->validated();
 
-				$address = Address::create($validated['address']);
+			$address_info = $validated['address'];
 
-				$user = User::findOrFail($validated['user_id']);
+			$address = Address::create(
+				[
+					'street_address' =>
+						$address_info['street'] .
+						', ' .
+						$address_info['number']
+					,
+					'locality' =>
+						$address_info['neighborhood'] .
+						' - ' .
+						$address_info['city'],
+					'region' => $address_info['state'],
+					'postal_code' => Str::remove(
+						'-',
+						$address_info['cep']
+					),
+					'complement' => $address_info['complement'] ?? '',
+					'country' => 'BR'
+				]
+			);
 
-				$shop = Shop::create([
+			$user = User::firstOrCreate(
+				[
+					'email' => $validated['email'],
+				],
+				[
 					'name' => $validated['name'],
-					'slug' => Str::slug($validated['name']),
+					'password' => Hash::make($validated['telephone'])
+				]
+			);
 
-					'manager_first_name' => $validated['manager_first_name'],
-					'manager_last_name' => $validated['manager_last_name'],
-
-					'phone' => $validated['phone'],
-					'address_id' => $address->id,
-					'user_id' => $user->id
+			if ($user->shop()->exists()) {
+				throw ValidationException::withMessages([
+					'user' => 'Usuário já possui um estabelecimento'
 				]);
+			}
 
-				return $shop;
-			});
+			$shop = Shop::create([
+				'name' => $validated['name'],
+				'slug' => Str::slug($validated['name']),
+				'phone' => $validated['telephone'],
 
-			return response()->json([
-				'success' => true,
-				'message' => 'Estabelecimento criado com sucesso!'
-			], 201);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'message' => $e->getMessage()
-			], 500);
-		}
+				'address_id' => $address->id,
+				'user_id' => $user->id
+			]);
+
+			return $shop;
+		});
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Estabelecimento criado com sucesso!'
+		], 201);
 	}
 
 	/**

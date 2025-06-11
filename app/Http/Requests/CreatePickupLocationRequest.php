@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateShopRequest extends FormRequest
+class CreatePickupLocationRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,10 +23,7 @@ class CreateShopRequest extends FormRequest
 	{
 		return [
 			'name' => 'required|string',
-			'email' => 'required|email',
-			'telephone' => 'required|string',
-
-			'status' => 'string',
+			'datetime' => 'required|date',
 
 			'address.street' => 'required|string',
 			'address.city' => 'required|string',

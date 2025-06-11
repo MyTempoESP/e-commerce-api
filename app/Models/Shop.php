@@ -9,8 +9,6 @@ class Shop extends Model
 	protected $fillable = [
 		'name',
 		'slug',
-		'manager_first_name',
-		'manager_last_name',
 		'phone',
 		'address_id',
 		'user_id'
@@ -19,6 +17,11 @@ class Shop extends Model
 	public function skus()
 	{
 		return $this->hasMany(Sku::class);
+	}
+
+	public function pickupLocations()
+	{
+		return $this->hasMany(PickupLocation::class);
 	}
 
 	public function consignees()

@@ -13,14 +13,14 @@ class Consignment extends Model
 		'commission',
 		'commission_type',
 
-		'address_id',
+		'pickup_location_id',
 		'consignee_id',
 		'shop_id'
 	];
 
-	public function address()
+	public function pickupLocation()
 	{
-		return $this->belongsTo(Address::class);
+		return $this->belongsTo(PickupLocation::class);
 	}
 
 	public function skus()

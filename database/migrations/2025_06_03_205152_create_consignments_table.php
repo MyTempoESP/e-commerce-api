@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PickupLocation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -30,9 +31,9 @@ return new class extends Migration {
 				'em trânsito',
 				'dest. conferido'
 			])->default('rascunho');
-			$table->foreignIdFor(Consignee::class)->constrained()->onDelete('cascade');
 			$table->foreignIdFor(Shop::class)->constrained()->onDelete('cascade');
-			$table->foreignIdFor(Address::class)->constrained();
+			$table->foreignIdFor(Consignee::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(PickupLocation::class)->constrained();
 			$table->timestamps();
 		});
 	}

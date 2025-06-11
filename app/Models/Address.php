@@ -14,6 +14,11 @@ class Address extends Model
 		'country'
 	];
 
+	public function pickupLocations()
+	{
+		return $this->hasOne(PickupLocation::class);
+	}
+
 	public function consignment()
 	{
 		return $this->hasOne(Consignment::class);
