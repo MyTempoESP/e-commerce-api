@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateConsignmentRequest extends FormRequest
+class UpdateConsignmentRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,11 +22,12 @@ class CreateConsignmentRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => 'required',
-			'status' => 'required',
-			'commission' => 'required',
-			'commission_type' => 'required',
-			'monitor' => 'required',
+			'name' => 'string',
+			'status' => 'string',
+			'commission' => 'string',
+			'commission_type' => 'required_with:commission|string',
+			'monitor' => 'string',
+
 			'pickup_location_id' => 'required',
 		];
 	}

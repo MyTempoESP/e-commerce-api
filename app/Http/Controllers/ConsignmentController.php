@@ -9,6 +9,7 @@ use App\Models\Consignee;
 use App\Models\Consignment;
 use App\Models\Shop;
 use App\Models\Sku;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use Illuminate\Http\Request;
@@ -71,53 +72,44 @@ class ConsignmentController extends Controller
 	{
 		Gate::authorize('create', Consignment::class);
 
-		try {
-			$consignment = DB::transaction(
-				function () use ($request) {
-					$validated = $request->validated();
+		$consignment = DB::transaction(
+			function () use ($request) {
+				$validated = $request->validated();
 
-					$shop = Auth::user()->shop;
+				$shop = Auth::user()->shop;
 
-					// ensure consignee belongs to user's shop
-					$consignee = $shop->consignees()->findOrFail(
-						$validated['consignee_id']
-					);
+				// ensure consignee belongs to user's shop
+				$consignee = $shop->consignees()->findOrFail(
+					$validated['monitor']
+				);
 
-					$address = $consignee->address;
+				// ensure pl is on user's shop
+				// TODO: should we create the pickup location?
+				$pickupLocation = $shop->pickupLocations()->findOrFail(
+					$validated['pickup_location_id']
+				);
 
-					if (isset($validated['address'])) {
-						$address = Address::create(
-							$validated['address']
-						);
-					}
+				$consignment = Consignment::create([
+					'name' => $validated['name'],
+					'slug' => Str::slug($validated['name']),
+					'status' => $validated['status'],
+					'commission' => $validated['commission'],
+					'commission_type' => $validated['commission_type'],
 
-					$consignment = Consignment::create([
-						'name' => $validated['name'],
-						'slug' => $validated['slug'],
-						'status' => $validated['status'],
-						'commission' => $validated['commission'],
-						'commission_type' => $validated['commission_type'],
+					'pickup_location_id' => $pickupLocation->id,
+					'consignee_id' => $consignee->id,
+					'shop_id' => $shop->id
+				]);
 
-						'address_id' => $address->id,
-						'consignee_id' => $consignee->id,
-						'shop_id' => $shop->id
-					]);
+				return $consignment;
+			}
+		);
 
-					return $consignment;
-				}
-			);
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Remessa criada com sucesso!',
-				'remessa' => $consignment->toResource()
-			], 201);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'message' => $e->getMessage()
-			], 500);
-		}
+		return response()->json([
+			'success' => true,
+			'message' => 'Remessa criada com sucesso!',
+			'remessa' => $consignment->toResource()
+		], 201);
 	}
 
 	/**
@@ -139,9 +131,60 @@ class ConsignmentController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(Request $request, string $id)
+	public function update(Request $request, Consignment $consignment)
 	{
-		//
+		Gate::authorize('update', $consignment);
+
+		$consignment = DB::transaction(
+			function () use ($request, $consignment) {
+				$validated = $request->validated();
+
+				$shop = Auth::user()->shop;
+
+				if (isset($validated['monitor'])) {
+					// ensure consignee belongs to user's shop
+					$consignee = $shop->consignees()->findOrFail(
+						$validated['monitor']
+					);
+
+					$consignment->consignee_id = $consignee->id;
+				}
+
+				if (isset($validated['pickup_location_id'])) {
+					// ensure pl is on user's shop
+					// TODO: should we create the pickup location?
+					$pickupLocation = $shop->pickupLocations()->findOrFail(
+						$validated['pickup_location_id']
+					);
+
+					$consignment->pickup_location_id = $pickupLocation->id;
+				}
+
+				if (isset($validated['name'])) {
+					$consignment->name = $validated['name'];
+					$consignment->slug = Str::slug($validated['name']);
+				}
+
+				if (isset($validated['status'])) {
+					$consignment->status = $validated['status'];
+				}
+
+				if (isset($validated['commission'])) {
+					$consignment->commission = $validated['commission'];
+					$consignment->commission_type = $validated['commission_type'];
+				}
+
+				$consignment->save();
+
+				return $consignment;
+			}
+		);
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Remessa editada com sucesso!',
+			'remessa' => $consignment->toResource()
+		], 201);
 	}
 
 	/**
