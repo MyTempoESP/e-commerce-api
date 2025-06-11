@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Address extends Model
 {
 	protected $fillable = [
-		'street_address',
-		'locality',
-		'region',
-		'postal_code',
-		'country'
+		'number',
+		'street',
+		'neighborhood',
+		'city',
+		'state',
+		'cep'
 	];
 
 	public function pickupLocations()

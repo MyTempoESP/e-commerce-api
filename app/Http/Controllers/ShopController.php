@@ -51,27 +51,9 @@ class ShopController extends Controller
 			$validated = $request->validated();
 
 			$address_info = $validated['address'];
+			$address_info['cep'] = Str::remove('-', $address_info['cep']);
 
-			$address = Address::create(
-				[
-					'street_address' =>
-						$address_info['street'] .
-						', ' .
-						$address_info['number']
-					,
-					'locality' =>
-						$address_info['neighborhood'] .
-						' - ' .
-						$address_info['city'],
-					'region' => $address_info['state'],
-					'postal_code' => Str::remove(
-						'-',
-						$address_info['cep']
-					),
-					'complement' => $address_info['complement'] ?? '',
-					'country' => 'BR'
-				]
-			);
+			$address = Address::create($address_info);
 
 			$user = User::firstOrCreate(
 				[

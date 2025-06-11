@@ -30,7 +30,7 @@ class CreatePickupLocationRequest extends FormRequest
 			'address.neighborhood' => 'required|string',
 			'address.state' => 'required|string',
 			'address.cep' => 'required|string',
-			'address.number' => 'required|string',
+			'address.number' => 'required|integer',
 			'address.complement' => 'string',
 		];
 	}

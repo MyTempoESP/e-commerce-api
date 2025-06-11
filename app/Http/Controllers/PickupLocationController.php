@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePickupLocationRequest;
+use App\Http\Requests\UpdatePickupLocationRequest;
 use App\Models\Address;
 use App\Models\PickupLocation;
 use Illuminate\Http\Request;
@@ -30,28 +31,9 @@ class PickupLocationController extends Controller
 			$validated = $request->validated();
 
 			$address_info = $validated['address'];
+			$address_info['cep'] = Str::remove('-', $address_info['cep']);
 
-			$address = Address::create(
-				[
-					'street_address' =>
-						$address_info['street'] .
-						', ' .
-						$address_info['number']
-					,
-					'locality' =>
-						$address_info['neighborhood'] .
-						' - ' .
-						$address_info['city']
-					,
-					'region' => $address_info['state'],
-					'postal_code' => Str::remove(
-						'-',
-						$address_info['cep']
-					),
-					'complement' => $address_info['complement'] ?? '',
-					'country' => 'BR'
-				]
-			);
+			$address = Address::create($address_info);
 
 			$shop = Auth::user()->shop;
 
@@ -71,6 +53,58 @@ class PickupLocationController extends Controller
 			'success' => true,
 			'message' => 'Local de retirada criado com sucesso!',
 			'ponto_retirada' => $location->toResource()
+		]);
+	}
+
+	public function update(UpdatePickupLocationRequest $request, PickupLocation $pickupLocation)
+	{
+		Gate::authorize('update', $pickupLocation);
+
+		DB::transaction(function () use ($request, $pickupLocation) {
+			$validated = $request->validated();
+
+			if (isset($validated['address'])) {
+				$address = $pickupLocation->address;
+
+				$address_info = $validated['address'];
+				$address_info['cep'] = Str::remove('-', $address_info['cep']);
+
+				$address->update($address_info);
+			}
+
+			if (isset($validated['name'])) {
+				$pickupLocation->name = $validated['name'];
+				$pickupLocation->slug = Str::slug($validated['name']);
+			}
+
+			if (isset($validated['datetime'])) {
+				$pickupLocation->pickup_at = new Carbon($validated['datetime']);
+			}
+
+			$pickupLocation->save();
+		});
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Local de retirada criado com sucesso!',
+			'ponto_retirada' => $pickupLocation->toResource()
+		]);
+	}
+
+	public function destroy(PickupLocation $pickupLocation)
+	{
+		Gate::authorize('delete', $pickupLocation);
+
+		DB::transaction(function () use ($pickupLocation) {
+			$address = $pickupLocation->address;
+
+			$pickupLocation->delete();
+			$address->delete();
+		});
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Local de retirada deletado com sucesso!'
 		]);
 	}
 }

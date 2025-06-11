@@ -57,6 +57,16 @@ Route::middleware('auth:sanctum')->group(function () {
 		'/pontos',
 		[PickupLocationController::class, 'index'],
 	);
+
+	Route::put(
+		'/pontos/{pickupLocation}',
+		[PickupLocationController::class, 'update']
+	);
+
+	Route::delete(
+		'/pontos/{pickupLocation}',
+		[PickupLocationController::class, 'destroy']
+	);
 });
 
 Route::post('/login', [LoginController::class, 'login']);

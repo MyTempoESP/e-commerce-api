@@ -12,12 +12,13 @@ return new class extends Migration {
 	{
 		Schema::create('addresses', function (Blueprint $table) {
 			$table->id();
-			$table->string('street_address', 255);
-			$table->string('locality', 255); // town/city
-			$table->string('region', 255); // state, province, county, etc
-			$table->string('postal_code', 8);
+			$table->integer('number');
+			$table->string('street', 255);
+			$table->string('neighborhood', 255);
+			$table->string('city', 255);
+			$table->string('state', 255);
+			$table->string('cep', 8);
 			$table->string('complement', 100)->nullable();
-			$table->string('country', 2); // ISO code
 			$table->timestamps();
 		});
 	}

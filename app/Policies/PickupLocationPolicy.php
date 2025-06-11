@@ -37,7 +37,7 @@ class PickupLocationPolicy
 	 */
 	public function update(User $user, PickupLocation $pickupLocation): bool
 	{
-		return false;
+		return $user->shop->id === $pickupLocation->shop_id;
 	}
 
 	/**
@@ -45,7 +45,7 @@ class PickupLocationPolicy
 	 */
 	public function delete(User $user, PickupLocation $pickupLocation): bool
 	{
-		return false;
+		return $user->shop->id === $pickupLocation->shop_id;
 	}
 
 	/**
