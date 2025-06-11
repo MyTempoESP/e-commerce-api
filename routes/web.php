@@ -67,6 +67,26 @@ Route::middleware('auth:sanctum')->group(function () {
 		'/pontos/{pickupLocation}',
 		[PickupLocationController::class, 'destroy']
 	);
+
+	Route::get(
+		'/monitores',
+		[ConsigneeController::class, 'index']
+	);
+
+	Route::post(
+		'/monitores',
+		[ConsigneeController::class, 'store']
+	);
+
+	Route::put(
+		'/monitores/{consignee}',
+		[ConsigneeController::class, 'update']
+	);
+
+	Route::delete(
+		'/monitores/{consignee}',
+		[ConsigneeController::class, 'destroy']
+	);
 });
 
 Route::post('/login', [LoginController::class, 'login']);

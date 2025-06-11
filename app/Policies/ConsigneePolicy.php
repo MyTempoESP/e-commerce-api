@@ -7,15 +7,6 @@ use App\Models\User;
 
 class ConsigneePolicy
 {
-	public function before(User $user, string $action)
-	{
-		if ($user->administrator()->exists()) {
-			return true;
-		}
-
-		return false;
-	}
-
 	/**
 	 * Determine whether the user can view any models.
 	 */
@@ -53,7 +44,7 @@ class ConsigneePolicy
 	 */
 	public function delete(User $user, Consignee $consignee): bool
 	{
-		return false;
+		return $user->shop->id === $consignee->shop_id;
 	}
 
 	/**

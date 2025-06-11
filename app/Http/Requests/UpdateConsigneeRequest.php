@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
-class CreateConsigneeRequest extends FormRequest
+class UpdateConsigneeRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -32,17 +32,16 @@ class CreateConsigneeRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => 'required|string',
-			'phone' => 'required|string',
-			'email' => 'required|string',
+			'name' => 'string',
+			'phone' => 'string',
+			'email' => 'string',
 
-			'address.street' => 'required|string',
-			'address.city' => 'required|string',
-			'address.neighborhood' => 'required|string',
-			'address.state' => 'required|string',
-			'address.cep' => 'required|string',
-			'address.number' => 'required|string',
-			'address.complement' => 'string',
+			'address.street' => 'required_with:address|string',
+			'address.city' => 'required_with:address|string',
+			'address.neighborhood' => 'required_with:address|string',
+			'address.state' => 'required_with:address|string',
+			'address.cep' => 'required_with:address|string',
+			'address.number' => 'required_with:address|integer',
 		];
 	}
 }

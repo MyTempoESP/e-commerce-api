@@ -51,7 +51,6 @@ class ShopController extends Controller
 			$validated = $request->validated();
 
 			$address_info = $validated['address'];
-			$address_info['cep'] = Str::remove('-', $address_info['cep']);
 
 			$address = Address::create($address_info);
 

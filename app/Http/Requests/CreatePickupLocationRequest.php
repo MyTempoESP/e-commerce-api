@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class CreatePickupLocationRequest extends FormRequest
 {
@@ -12,6 +13,15 @@ class CreatePickupLocationRequest extends FormRequest
 	public function authorize(): bool
 	{
 		return true;
+	}
+
+	protected function prepareForValidation()
+	{
+		$this->merge(
+			[
+				'address.cep' => Str::remove('-', $this->address['cep']),
+			]
+		);
 	}
 
 	/**

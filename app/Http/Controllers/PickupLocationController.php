@@ -31,7 +31,6 @@ class PickupLocationController extends Controller
 			$validated = $request->validated();
 
 			$address_info = $validated['address'];
-			$address_info['cep'] = Str::remove('-', $address_info['cep']);
 
 			$address = Address::create($address_info);
 
@@ -67,7 +66,6 @@ class PickupLocationController extends Controller
 				$address = $pickupLocation->address;
 
 				$address_info = $validated['address'];
-				$address_info['cep'] = Str::remove('-', $address_info['cep']);
 
 				$address->update($address_info);
 			}
