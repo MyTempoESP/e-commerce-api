@@ -21,6 +21,11 @@ class Shop extends Model
 		return $this->hasMany(Sku::class);
 	}
 
+	public function consignees()
+	{
+		return $this->hasMany(Consignee::class);
+	}
+
 	public function consignments()
 	{
 		return $this->hasMany(Consignment::class);

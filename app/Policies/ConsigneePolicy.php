@@ -21,7 +21,7 @@ class ConsigneePolicy
 	 */
 	public function viewAny(User $user): bool
 	{
-		return false;
+		return $user->shop()->exists();
 	}
 
 	/**
@@ -29,7 +29,7 @@ class ConsigneePolicy
 	 */
 	public function view(User $user, Consignee $consignee): bool
 	{
-		return false;
+		return $user->id === $consignee->user_id;
 	}
 
 	/**
@@ -45,7 +45,7 @@ class ConsigneePolicy
 	 */
 	public function update(User $user, Consignee $consignee): bool
 	{
-		return false;
+		return $user->id === $consignee->user_id;
 	}
 
 	/**

@@ -17,6 +17,10 @@ class ConsignmentResource extends JsonResource
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
+			'slug' => $this->slug,
+			'status' => $this->status,
+			'commission' => $this->commission,
+			'commission_type' => $this->commission_type,
 		];
 	}
 }

@@ -21,7 +21,7 @@ class CategoryPolicy
 	 */
 	public function view(User $user, Category $category): bool
 	{
-		return false;
+		return $user->shop->id === $category->shop_id;
 	}
 
 	/**
@@ -37,7 +37,7 @@ class CategoryPolicy
 	 */
 	public function update(User $user, Category $category): bool
 	{
-		return false;
+		return $user->shop->id === $category->shop_id;
 	}
 
 	/**
@@ -45,7 +45,7 @@ class CategoryPolicy
 	 */
 	public function delete(User $user, Category $category): bool
 	{
-		return false;
+		return $user->shop->id === $category->shop_id;
 	}
 
 	/**

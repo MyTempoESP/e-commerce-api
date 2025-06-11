@@ -18,9 +18,13 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
 	Route::resource('products', ProductController::class);
 	Route::resource('categories', CategoryController::class);
-	Route::resource('consignments', ConsignmentController::class);
 	Route::resource('consignees', ConsigneeController::class);
 	Route::resource('shops', ShopController::class);
+
+	Route::post(
+		'/shops/{shop}/consignments/{consignment}/products',
+		[ConsignmentController::class, 'addProduct'],
+	);
 });
 
 Route::post('/login', [LoginController::class, 'login']);
