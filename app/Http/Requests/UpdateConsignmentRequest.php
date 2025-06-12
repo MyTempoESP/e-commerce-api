@@ -22,13 +22,13 @@ class UpdateConsignmentRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => 'string',
 			'status' => 'string',
-			'commission' => 'string',
-			'commission_type' => 'required_with:commission|string',
-			'monitor' => 'string',
 
-			'pickup_location_id' => 'required',
+			'monitorProfit' => '',
+			'monitorProfitPercentage' => '',
+
+			'monitorId' => '',
+			'destinationId' => '',
 		];
 	}
 }

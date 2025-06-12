@@ -104,9 +104,29 @@ Route::middleware('auth:sanctum')->group(function () {
 		[ConsignmentController::class, 'index']
 	);
 
+	Route::get(
+		'/remessas/{consignment}',
+		[ConsignmentController::class, 'show']
+	);
+
 	Route::post(
 		'/remessas',
 		[ConsignmentController::class, 'store']
+	);
+
+	Route::put(
+		'/remessas/{consignment}',
+		[ConsignmentController::class, 'update']
+	);
+
+	Route::get(
+		'/remessas/{consignment}/produtos',
+		[ProductController::class, 'consignmentIndex']
+	);
+
+	Route::post(
+		'/produtos',
+		[ProductController::class, 'store']
 	);
 });
 

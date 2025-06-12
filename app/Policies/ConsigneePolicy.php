@@ -36,7 +36,8 @@ class ConsigneePolicy
 	 */
 	public function update(User $user, Consignee $consignee): bool
 	{
-		return $user->id === $consignee->user_id;
+		return $user->id === $consignee->user_id ||
+			$user->shop->id === $consignee->shop_id;
 	}
 
 	/**

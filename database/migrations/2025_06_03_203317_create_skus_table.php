@@ -18,11 +18,17 @@ return new class extends Migration {
 			$table->uuid();
 
 			$table->string('code', 255);
-			$table->decimal('price', 8, 2);
 			$table->integer('quantity');
 
-			$table->string('name', 255);
-			$table->string('slug', 255);
+			$table->decimal('price', 8, 2);
+			$table->integer('discount');
+
+			$table->json('desc_images')->nullable();
+			$table->json('spec_images')->nullable();
+			$table->json('pack_images')->nullable();
+
+			$table->boolean('featured')->default(false);
+
 			$table->string('image', 255)->nullable();
 			$table->text('description')->nullable();
 
@@ -30,7 +36,7 @@ return new class extends Migration {
 			$table->foreignIdFor(Category::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
 
-			$table->unique(['shop_id', 'code']);
+			$table->unique(['shop_id', 'generic_code']);
 			$table->unique('uuid');
 		});
 	}

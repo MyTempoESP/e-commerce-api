@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddProductToConsignmentRequest;
 use App\Http\Requests\CreateConsignmentRequest;
+use App\Http\Requests\UpdateConsignmentRequest;
 use App\Models\Address;
 use App\Models\Consignee;
 use App\Models\Consignment;
@@ -152,7 +153,7 @@ class ConsignmentController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(Request $request, Consignment $consignment)
+	public function update(UpdateConsignmentRequest $request, Consignment $consignment)
 	{
 		Gate::authorize('update', $consignment);
 
@@ -162,37 +163,35 @@ class ConsignmentController extends Controller
 
 				$shop = Auth::user()->shop;
 
-				if (isset($validated['monitor'])) {
+				if (isset($validated['monitorId'])) {
 					// ensure consignee belongs to user's shop
 					$consignee = $shop->consignees()->findOrFail(
-						$validated['monitor']
+						$validated['monitorId']
 					);
 
 					$consignment->consignee_id = $consignee->id;
 				}
 
-				if (isset($validated['pickup_location_id'])) {
+				if (isset($validated['destinationId'])) {
 					// ensure pl is on user's shop
 					// TODO: should we create the pickup location?
 					$pickupLocation = $shop->pickupLocations()->findOrFail(
-						$validated['pickup_location_id']
+						$validated['destinationId']
 					);
 
 					$consignment->pickup_location_id = $pickupLocation->id;
-				}
-
-				if (isset($validated['name'])) {
-					$consignment->name = $validated['name'];
-					$consignment->slug = Str::slug($validated['name']);
 				}
 
 				if (isset($validated['status'])) {
 					$consignment->status = $validated['status'];
 				}
 
-				if (isset($validated['commission'])) {
-					$consignment->commission = $validated['commission'];
-					$consignment->commission_type = $validated['commission_type'];
+				if (isset($validated['monitorProfitPercentage'])) {
+					$consignment->commission = $validated['monitorProfitPercentage'];
+					$consignment->commission_type = 'variable';
+				} else if (isset($validated['monitorProfit'])) {
+					$consignment->commission = $validated['monitorProfit'];
+					$consignment->commission_type = 'fixed';
 				}
 
 				$consignment->save();
