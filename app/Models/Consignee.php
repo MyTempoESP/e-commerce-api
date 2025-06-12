@@ -27,7 +27,7 @@ class Consignee extends Model
 
 	public function consignments()
 	{
-		return $this->belongsTo(Consignment::class);
+		return $this->hasMany(Consignment::class);
 	}
 
 	public function address()

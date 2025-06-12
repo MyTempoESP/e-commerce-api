@@ -10,6 +10,12 @@ class Product extends Model
 		'sku_id',
 	];
 
+	public function reports()
+	{
+		return $this->belongsToMany(Report::class)
+			->withTimestamps();
+	}
+
 	public function sku()
 	{
 		$this->belongsTo(Sku::class);

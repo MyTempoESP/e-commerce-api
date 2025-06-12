@@ -24,7 +24,11 @@ class ConsignmentController extends Controller
 	 */
 	public function index()
 	{
-		//
+		Gate::authorize('viewAny', Consignment::class);
+
+		$shop = Auth::user()->shop;
+
+		return $shop->consignments->toResourceCollection();
 	}
 
 	public function addProduct(
@@ -80,21 +84,36 @@ class ConsignmentController extends Controller
 
 				// ensure consignee belongs to user's shop
 				$consignee = $shop->consignees()->findOrFail(
-					$validated['monitor']
+					$validated['monitorId']
 				);
 
 				// ensure pl is on user's shop
 				// TODO: should we create the pickup location?
 				$pickupLocation = $shop->pickupLocations()->findOrFail(
-					$validated['pickup_location_id']
+					$validated['destinationId']
 				);
 
+				$commission = null;
+				$commission_type = null;
+
+				if (isset($validated['monitorProfitPercentage'])) {
+					$commission_type = 'variable';
+					$commission = $validated['monitorProfitPercentage'];
+				} else {
+					$commission_type = 'fixed';
+					$commission = $validated['monitorProfit'];
+				}
+
+				$uuid = Str::uuid();
+
 				$consignment = Consignment::create([
-					'name' => $validated['name'],
-					'slug' => Str::slug($validated['name']),
+					'slug' => Str::slug($uuid),
+					'uuid' => $uuid,
+
 					'status' => $validated['status'],
-					'commission' => $validated['commission'],
-					'commission_type' => $validated['commission_type'],
+
+					'commission' => $commission,
+					'commission_type' => $commission_type,
 
 					'pickup_location_id' => $pickupLocation->id,
 					'consignee_id' => $consignee->id,
@@ -115,9 +134,11 @@ class ConsignmentController extends Controller
 	/**
 	 * Display the specified resource.
 	 */
-	public function show(string $id)
+	public function show(Consignment $consignment)
 	{
-		//
+		Gate::authorize('view', $consignment);
+
+		return $consignment->toResource();
 	}
 
 	/**

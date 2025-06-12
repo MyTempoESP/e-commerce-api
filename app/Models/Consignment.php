@@ -12,11 +12,18 @@ class Consignment extends Model
 		'status',
 		'commission',
 		'commission_type',
+		'uuid',
 
 		'pickup_location_id',
 		'consignee_id',
 		'shop_id'
 	];
+
+	public function reports()
+	{
+		return $this->belongsToMany(Report::class)
+			->withTimestamps();
+	}
 
 	public function pickupLocation()
 	{
@@ -32,7 +39,7 @@ class Consignment extends Model
 
 	public function consignee()
 	{
-		return $this->hasOne(Consignee::class);
+		return $this->belongsTo(Consignee::class);
 	}
 
 	public function shop()

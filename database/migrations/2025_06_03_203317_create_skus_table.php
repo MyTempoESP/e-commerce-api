@@ -15,6 +15,8 @@ return new class extends Migration {
 	{
 		Schema::create('skus', function (Blueprint $table) {
 			$table->id();
+			$table->uuid();
+
 			$table->string('code', 255);
 			$table->decimal('price', 8, 2);
 			$table->integer('quantity');
@@ -29,6 +31,7 @@ return new class extends Migration {
 			$table->timestamps();
 
 			$table->unique(['shop_id', 'code']);
+			$table->unique('uuid');
 		});
 	}
 

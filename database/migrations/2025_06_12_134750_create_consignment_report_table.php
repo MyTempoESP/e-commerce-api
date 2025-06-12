@@ -1,12 +1,10 @@
 <?php
 
+use App\Models\Consignment;
+use App\Models\Report;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
-use App\Models\Category;
-use App\Models\Shop;
-use App\Models\Sku;
 
 return new class extends Migration {
 	/**
@@ -14,13 +12,11 @@ return new class extends Migration {
 	 */
 	public function up(): void
 	{
-		Schema::create('products', function (Blueprint $table) {
+		Schema::create('consignment_report', function (Blueprint $table) {
 			$table->id();
-			$table->uuid();
-			$table->foreignIdFor(Sku::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Consignment::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Report::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
-
-			$table->unique('uuid');
 		});
 	}
 
@@ -29,6 +25,6 @@ return new class extends Migration {
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('products');
+		Schema::dropIfExists('consignment_report');
 	}
 };

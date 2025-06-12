@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 
-class CreateConsignmentRequest extends FormRequest
+class CreateReportRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -13,15 +12,6 @@ class CreateConsignmentRequest extends FormRequest
 	public function authorize(): bool
 	{
 		return true;
-	}
-
-	public function prepareForValidation()
-	{
-		$this->merge(
-			[
-				'status' => Str::lower($this->status)
-			]
-		);
 	}
 
 	/**
@@ -32,11 +22,11 @@ class CreateConsignmentRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'status' => 'required|string',
-			'monitorId' => 'required',
-			'monitorProfit' => 'required_without:monitorProfitPercentage',
-			'monitorProfitPercentage' => 'required_without:monitorProfit',
-			'destinationId' => 'required',
+			'report' => 'required|string',
+			'type' => 'required|string',
+			'priority' => 'required|string',
+			'monitor' => 'required|string',
+			'description' => 'string'
 		];
 	}
 }

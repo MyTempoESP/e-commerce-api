@@ -17,7 +17,8 @@ return new class extends Migration {
 	{
 		Schema::create('consignments', function (Blueprint $table) {
 			$table->id();
-			$table->string('name', 255);
+			$table->uuid();
+			//$table->string('name', 255);
 			$table->string('slug', 255); // autogerado
 			$table->decimal('commission', 8, 2)->default('0.00');
 			$table->enum('commission_type', [
@@ -35,6 +36,8 @@ return new class extends Migration {
 			$table->foreignIdFor(Consignee::class)->constrained()->onDelete('cascade');
 			$table->foreignIdFor(PickupLocation::class)->constrained();
 			$table->timestamps();
+
+			$table->unique('uuid');
 		});
 	}
 

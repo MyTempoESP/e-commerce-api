@@ -14,6 +14,11 @@ class Shop extends Model
 		'user_id'
 	];
 
+	public function reports()
+	{
+		return $this->hasMany(Report::class);
+	}
+
 	public function skus()
 	{
 		return $this->hasMany(Sku::class);

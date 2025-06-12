@@ -16,10 +16,11 @@ class ConsignmentResource extends JsonResource
 	{
 		return [
 			'id' => $this->id,
-			'name' => $this->name,
 			'slug' => $this->slug,
+			'code' => $this->uuid,
 			'status' => $this->status,
-			'commission' => $this->commission,
+			'destination' => $this->pickupLocation->name,
+			'responsibleMonitor' => $this->consignee->name,
 			'commission_type' => $this->commission_type,
 		];
 	}

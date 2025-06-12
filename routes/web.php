@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PickupLocationController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -86,6 +87,26 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::delete(
 		'/monitores/{consignee}',
 		[ConsigneeController::class, 'destroy']
+	);
+
+	Route::get(
+		'/ocorrencias',
+		[ReportController::class, 'index']
+	);
+
+	Route::post(
+		'/ocorrencias',
+		[ReportController::class, 'store']
+	);
+
+	Route::get(
+		'/remessas',
+		[ConsignmentController::class, 'index']
+	);
+
+	Route::post(
+		'/remessas',
+		[ConsignmentController::class, 'store']
 	);
 });
 

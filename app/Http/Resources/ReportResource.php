@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ConsigneeResource extends JsonResource
+class ReportResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -16,10 +16,13 @@ class ConsigneeResource extends JsonResource
 	{
 		return [
 			'id' => $this->id,
-			'name' => $this->name,
-			'email' => $this->user->email,
-			'phone' => $this->phone,
-			'address' => $this->address->toResource()
+			'report' => $this->report,
+			'type' => $this->type,
+			'priority' => $this->priority,
+			'description' => $this->description,
+
+			'monitor' => $this->consignee->name,
+			'idcoisa' => $this->getTarget()->uuid
 		];
 	}
 }
