@@ -16,7 +16,8 @@ class ProductResource extends JsonResource
 	{
 		return [
 			'id' => $this->id,
-			'name' => $this->name
+			'uuid' => $this->uuid,
+			'sku' => $this->sku->toResource()
 		];
 	}
 }

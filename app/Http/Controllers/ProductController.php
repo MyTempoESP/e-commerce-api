@@ -6,16 +6,14 @@ use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 
 use App\Models\Consignment;
-use App\Models\Customization;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\Sku;
 use DB;
-use Exception;
 use Gate;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
@@ -79,11 +77,13 @@ class ProductController extends Controller
 			 * @var Sku
 			 */
 			$sku = $shop->skus()->lockForUpdate()
-				->where(
-					'code',
-					$code
-				)->firstOrCreate(
+				->firstOrCreate(
 					[
+						'code' => $code
+					],
+					[
+						'uuid' => Str::uuid(),
+
 						'price' => $validated['price'],
 						'quantity' => 0,
 
@@ -150,15 +150,26 @@ class ProductController extends Controller
 		DB::transaction(function () use ($sku, $validated) {
 			for ($i = 0; $i < $validated['quantity']; $i++) {
 				Product::create([
+					'uuid' => Str::uuid(),
 					'sku_id' => $sku->id
 				]);
 			}
 		});
 
+		/**
+		 * @var string
+		 */
+		$message = 'Produto criado com sucesso!';
+
+		if ($validated['quantity'] > 1) {
+			$message = 'Produtos criados com sucesso!';
+		}
+
 		return response()->json([
 			'success' => true,
-			'message' => 'Produto criado com sucesso!'
-		], 201);
+			'message' => $message,
+			'produto' => $sku->toResource()
+		], Response::HTTP_CREATED);
 	}
 
 	/**
