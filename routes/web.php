@@ -128,6 +128,11 @@ Route::middleware('auth:sanctum')->group(function () {
 		'/produtos',
 		[ProductController::class, 'store']
 	);
+
+	Route::get(
+		'/produtos',
+		[ProductController::class, 'index']
+	);
 });
 
 Route::post('/login', [LoginController::class, 'login']);

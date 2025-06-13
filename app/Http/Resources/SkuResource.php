@@ -18,7 +18,16 @@ class SkuResource extends JsonResource
 			'id' => $this->id,
 			'code' => $this->code,
 			'price' => $this->price,
-			'quantity' => $this->quantity
+			'quantity' => $this->quantity,
+			'discount' => $this->discount,
+			'image' => $this->image,
+			'description' => $this->description,
+			'spec_images' => $this->spec_images,
+			'desc_images' => $this->desc_images,
+			'pack_images' => $this->pack_images,
+			'featured' => $this->featured,
+			'category' => $this->category->toResource(),
+			'shop' => $this->shop->toResource()
 		];
 	}
 }

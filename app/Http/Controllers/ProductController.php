@@ -25,9 +25,9 @@ class ProductController extends Controller
 		Gate::authorize('viewAny', Product::class);
 
 		$shop = Auth::user()->shop;
-		$products = $shop->products;
+		$skus = $shop->skus;
 
-		return $products->toResourceCollection();
+		return $skus->toResourceCollection();
 	}
 
 	public function consignmentIndex(Consignment $consignment)
@@ -83,6 +83,7 @@ class ProductController extends Controller
 					],
 					[
 						'uuid' => Str::uuid(),
+						'name' => $validated['name'],
 
 						'price' => $validated['price'],
 						'quantity' => 0,
