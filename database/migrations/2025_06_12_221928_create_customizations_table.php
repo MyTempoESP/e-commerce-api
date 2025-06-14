@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Sku;
+use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +20,7 @@ return new class extends Migration {
 			// is user allowed to set this customization?
 			$table->boolean('enabled');
 			//$table->string('value', 255);
-			$table->foreignIdFor(Sku::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Product::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
 		});
 	}

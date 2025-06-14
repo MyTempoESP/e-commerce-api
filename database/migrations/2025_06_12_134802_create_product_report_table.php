@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Sku;
+use App\Models\Product;
 use App\Models\Report;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,9 +12,9 @@ return new class extends Migration {
 	 */
 	public function up(): void
 	{
-		Schema::create('sku_report', function (Blueprint $table) {
+		Schema::create('product_report', function (Blueprint $table) {
 			$table->id();
-			$table->foreignIdFor(Sku::class)->constrained()->onDelete('cascade');
+			$table->foreignIdFor(Product::class)->constrained()->onDelete('cascade');
 			$table->foreignIdFor(Report::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
 		});

@@ -38,9 +38,21 @@ class UpdateProductRequest extends FormRequest
 	{
 		return [
 			'name' => 'string',
-			'price' => 'decimal:2',
-			'image' => 'string', // url
-			'description' => 'max:300'
+			'price' => '',
+			'image_url' => '', // url
+			'category' => 'string',
+			'discount' => '',
+			'description' => 'max:300',
+			'stock' => '',
+			'descriptionImages' => '',
+			'specificationsImages' => '',
+			'deliveryImages' => '',
+			'colors' => '',
+			'allowCustomColorSelection' => '',
+			'allowCustomName' => '',
+			'allowCustomModality' => '',
+			'featured' => '',
+			'specifications' => '',
 		];
 	}
 }

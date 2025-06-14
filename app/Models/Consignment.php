@@ -30,9 +30,9 @@ class Consignment extends Model
 		return $this->belongsTo(PickupLocation::class);
 	}
 
-	public function skus()
+	public function products()
 	{
-		return $this->belongsToMany(Sku::class, 'consignment_sku')
+		return $this->belongsToMany(Product::class)
 			->withPivot('price', 'quantity')
 			->withTimestamps();
 	}

@@ -70,22 +70,22 @@ class ReportController extends Controller
 				);
 			} catch (ModelNotFoundException) {
 				/**
-				 * @var \App\Models\Sku
+				 * @var \App\Models\Product
 				 */
-				$sku = $shop->skus()->where(
+				$product = $shop->products()->where(
 					'uuid',
 					$validated['uuid']
 				)->firstOrFail();
 
-				if (!$sku->consignments()->exists()) {
+				if (!$product->consignments()->exists()) {
 					throw ValidationException::withMessages(
 						[
-							'sku' => 'este produto não está em uma remessa'
+							'product' => 'este produto não está em uma remessa'
 						]
 					);
 				}
 
-				$sku->reports()->attach($report->id);
+				$product->reports()->attach($report->id);
 			}
 		});
 	}

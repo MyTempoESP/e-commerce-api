@@ -25,7 +25,7 @@ class ProductController extends Controller
 		Gate::authorize('viewAny', Product::class);
 
 		$shop = Auth::user()->shop;
-		$skus = $shop->skus;
+		$skus = $shop->products;
 
 		return $skus->toResourceCollection();
 	}
@@ -64,19 +64,27 @@ class ProductController extends Controller
 		 * @var \App\Models\Category
 		 * TODO: fetch by id or name?
 		 */
-		$category = $shop->categories
-			->findOrFail($validated['categoryId']);
+		$category = $shop->categories()
+			->firstOrCreate(
+				[
+					'name' => $validated['category']
+				],
+				[
+					'slug' => Str::slug($validated['category']),
+					'shop_id' => $shop->id
+				]
+			);
 
-		$code = Sku::generateCode($validated);
+		$code = product::generateCode($validated);
 
 		/**
-		 * @var Sku
+		 * @var Product
 		 */
-		$sku = DB::transaction(function () use ($validated, $shop, $code, $category) {
+		$product = DB::transaction(function () use ($validated, $shop, $code, $category) {
 			/**
-			 * @var Sku
+			 * @var Product
 			 */
-			$sku = $shop->skus()->lockForUpdate()
+			$product = $shop->products()->lockForUpdate()
 				->firstOrCreate(
 					[
 						'code' => $code
@@ -90,13 +98,13 @@ class ProductController extends Controller
 
 						'discount' => $validated['discount'],
 
-						'image' => $validated['imageUrl'],
+						'image' => $validated['image_url'] ?? '',
 						'description' => $validated['description'],
 
 						// url Arrays
-						'desc_images' => $validated['descriptionImages'],
-						'spec_images' => $validated['specificationsImages'],
-						'pack_images' => $validated['deliveryImages'],
+						'desc_images' => $validated['descriptionImages'] ?? '[]',
+						'spec_images' => $validated['specificationsImages'] ?? '[]',
+						'pack_images' => $validated['deliveryImages'] ?? '[]',
 
 						'featured' => $validated['featured'],
 
@@ -105,15 +113,15 @@ class ProductController extends Controller
 					]
 				);
 
-			$sku->update([
-				'quantity' => $sku->quantity + $validated['quantity']
+			$product->update([
+				'quantity' => $product->quantity + $validated['stock']
 			]);
 
-			return $sku;
+			return $product;
 		});
 
-		DB::transaction(function () use ($sku, $validated) {
-			$sku->customizations()
+		DB::transaction(function () use ($product, $validated) {
+			$product->customizations()
 				->firstOrCreate(
 					[
 						'name' => 'color'
@@ -121,40 +129,33 @@ class ProductController extends Controller
 					[
 						'options' => $validated['colors'],
 						'enabled' => $validated['allowCustomColorSelection'],
-						'sku_id' => $sku->id
+						'product_id' => $product->id
 					]
 				);
 
-			$sku->customizations()
+			$product->customizations()
 				->firstOrCreate(
 					[
 						'name' => 'name'
 					],
 					[
 						'enabled' => $validated['allowCustomName'],
-						'sku_id' => $sku->id
+						'product_id' => $product->id
 					]
 				);
 
-			$sku->customizations()
+			$product->customizations()
 				->firstOrCreate(
 					[
 						'name' => 'modality'
 					],
 					[
 						'enabled' => $validated['allowCustomModality'],
-						'sku_id' => $sku->id
+						'product_id' => $product->id
 					]
 				);
-		});
 
-		DB::transaction(function () use ($sku, $validated) {
-			for ($i = 0; $i < $validated['quantity']; $i++) {
-				Product::create([
-					'uuid' => Str::uuid(),
-					'sku_id' => $sku->id
-				]);
-			}
+			return $product;
 		});
 
 		/**
@@ -162,14 +163,13 @@ class ProductController extends Controller
 		 */
 		$message = 'Produto criado com sucesso!';
 
-		if ($validated['quantity'] > 1) {
+		if ($validated['stock'] > 1) {
 			$message = 'Produtos criados com sucesso!';
 		}
 
 		return response()->json([
 			'success' => true,
-			'message' => $message,
-			'produto' => $sku->toResource()
+			'message' => $message
 		], Response::HTTP_CREATED);
 	}
 
@@ -194,14 +194,48 @@ class ProductController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(UpdateProductRequest $request, string $id)
+	public function update(UpdateProductRequest $request, Product $product)
 	{
+		Gate::authorize('update', Product::class);
+
+		$validated = $request->validated();
+
+		$shop = Auth::user()->shop;
+
+		if (isset($validated['category'])) {
+			/**
+			 * @var \App\Models\Category
+			 */
+			$category = $shop->categories()
+				->firstOrCreate(
+					[
+						'name' => $validated['category']
+					],
+					[
+						'slug' => Str::slug($validated['category']),
+						'shop_id' => $shop->id
+					]
+				);
+		}
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Produto atualizado com sucesso'
+		], Response::HTTP_CREATED);
 	}
 
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(string $id)
+	public function destroy(Product $product)
 	{
+		Gate::authorize('delete', $product);
+
+		$product->delete();
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Produto deletado com sucesso!'
+		]);
 	}
 }

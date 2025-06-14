@@ -13,9 +13,11 @@ return new class extends Migration {
 	 */
 	public function up(): void
 	{
-		Schema::create('skus', function (Blueprint $table) {
+		Schema::create('products', function (Blueprint $table) {
 			$table->id();
 			$table->uuid();
+
+			$table->string('name', 255);
 
 			$table->string('code', 255);
 			$table->integer('quantity');
@@ -36,7 +38,7 @@ return new class extends Migration {
 			$table->foreignIdFor(Category::class)->constrained()->onDelete('cascade');
 			$table->timestamps();
 
-			$table->unique(['shop_id', 'generic_code']);
+			$table->unique(['shop_id', 'code']);
 			$table->unique('uuid');
 		});
 	}
@@ -46,6 +48,6 @@ return new class extends Migration {
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('skus');
+		Schema::dropIfExists('products');
 	}
 };

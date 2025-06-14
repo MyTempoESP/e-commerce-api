@@ -133,6 +133,21 @@ Route::middleware('auth:sanctum')->group(function () {
 		'/produtos',
 		[ProductController::class, 'index']
 	);
+
+	Route::get(
+		'/produtos/{product}',
+		[ProductController::class, 'show']
+	);
+
+	Route::put(
+		'/produtos/{product}',
+		[ProductController::class, 'update']
+	);
+
+	Route::delete(
+		'/produtos/{product}',
+		[ProductController::class, 'destroy']
+	);
 });
 
 Route::post('/login', [LoginController::class, 'login']);

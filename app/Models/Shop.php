@@ -19,9 +19,9 @@ class Shop extends Model
 		return $this->hasMany(Report::class);
 	}
 
-	public function skus()
+	public function products()
 	{
-		return $this->hasMany(Sku::class);
+		return $this->hasMany(Product::class);
 	}
 
 	public function pickupLocations()

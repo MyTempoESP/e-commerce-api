@@ -11,7 +11,7 @@ class Customization extends Model
 		'options',
 		'enabled',
 
-		'sku_id'
+		'product_id'
 	];
 
 	protected function casts()
@@ -21,8 +21,8 @@ class Customization extends Model
 		];
 	}
 
-	public function sku()
+	public function product()
 	{
-		return $this->belongsTo(Sku::class);
+		return $this->belongsTo(Product::class);
 	}
 }

@@ -6,3 +6,5 @@
 
 TODO: diminuir o tamanho e escopo das DB::transaction
 ta uma bagunça isso
+
+EU COLOQUEI PRODUCT::CLASS NO CATEGORY()
