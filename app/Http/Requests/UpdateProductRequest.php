@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Str;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -29,6 +31,38 @@ class UpdateProductRequest extends FormRequest
 		return true;
 	}
 
+	public function prepareForValidation()
+	{
+		$data = [];
+
+		$product = [
+			'name' => $this->input('name'),
+			'price' => $this->input('price'),
+			'image' => $this->input('imageUrl'), // image_url in CREATE
+			'discount' => $this->input('discount'),
+			'description' => $this->input('description'),
+			'category' => $this->input('category'),
+			'quantity' => $this->input('stock'),
+			'featured' => $this->input('featured'),
+
+			'desc_images' => $this->input('descriptionImages', '[]'),
+			'spec_images' => $this->input('specificationsImages', '[]'),
+			'pack_images' => $this->input('deliveryImages', '[]'),
+		];
+
+		if ($this->has('category')) {
+			$data['category'] =
+				[
+					'name' => $this->input('category'),
+					'slug' => Str::slug($this->input('category')),
+				];
+		}
+
+		$data['product'] = $product;
+
+		$this->merge($data);
+	}
+
 	/**
 	 * Get the validation rules that apply to the request.
 	 *
@@ -37,22 +71,29 @@ class UpdateProductRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => 'string',
-			'price' => '',
-			'image_url' => '', // url
-			'category' => 'string',
-			'discount' => '',
-			'description' => 'max:300',
-			'stock' => '',
-			'descriptionImages' => '',
-			'specificationsImages' => '',
-			'deliveryImages' => '',
-			'colors' => '',
-			'allowCustomColorSelection' => '',
-			'allowCustomName' => '',
-			'allowCustomModality' => '',
-			'featured' => '',
-			'specifications' => '',
+			// unchangeable
+			//'product.code' => '',
+			//'product.uuid' => '',
+
+			'product.name' => '',
+			'product.price' => '',
+			'product.discount' => '',
+			'product.description' => 'max:300',
+			'product.image' => '',
+			'product.desc_images' => '',
+			'product.spec_images' => '',
+			'product.pack_images' => '',
+			'product.featured' => '',
+			'product.quantity' => '',
+
+			'category.name' => 'string',
+			'category.slug' => 'string',
+
+			// TODO
+			//'colors' => '',
+			//'allowCustomName' => '',
+			//'allowCustomModality' => '',
+			//'allowCustomColorSelection' => '',
 		];
 	}
 }

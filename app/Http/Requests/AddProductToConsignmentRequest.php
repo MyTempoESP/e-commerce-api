@@ -23,7 +23,7 @@ class AddProductToConsignmentRequest extends FormRequest
 	{
 		return [
 			'quantity' => 'required|integer',
-			'sku_id' => 'required',
+			'product_id' => 'required',
 		];
 	}
 }

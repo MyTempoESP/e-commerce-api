@@ -20,7 +20,7 @@ return new class extends Migration {
 			$table->string('name', 255);
 
 			$table->string('code', 255);
-			$table->integer('quantity');
+			$table->integer('quantity')->default(0);
 
 			$table->decimal('price', 8, 2);
 			$table->integer('discount');
@@ -28,7 +28,7 @@ return new class extends Migration {
 			$table->json('desc_images')->nullable();
 			$table->json('spec_images')->nullable();
 			$table->json('pack_images')->nullable();
-
+			
 			$table->boolean('featured')->default(false);
 
 			$table->string('image', 255)->nullable();

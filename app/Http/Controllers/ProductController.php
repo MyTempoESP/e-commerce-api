@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Consignment;
 use App\Models\Product;
 use App\Models\Shop;
-use App\Models\Sku;
+use App\Models\Specification;
 use DB;
 use Gate;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +60,9 @@ class ProductController extends Controller
 		 */
 		$shop = Auth::user()->shop;
 
+		$category_details = $validated['category'];
+		$category_details['shop_id'] = $shop->id;
+
 		/**
 		 * @var \App\Models\Category
 		 * TODO: fetch by id or name?
@@ -67,54 +70,36 @@ class ProductController extends Controller
 		$category = $shop->categories()
 			->firstOrCreate(
 				[
-					'name' => $validated['category']
+					'name' => $category_details['name']
 				],
-				[
-					'slug' => Str::slug($validated['category']),
-					'shop_id' => $shop->id
-				]
+				$category_details
 			);
-
-		$code = product::generateCode($validated);
 
 		/**
 		 * @var Product
 		 */
-		$product = DB::transaction(function () use ($validated, $shop, $code, $category) {
+		$product = DB::transaction(function () use ($validated, $shop, $category) {
+			$product_details = $validated['product'];
+
+			$product_details['category_id'] = $category->id;
+			$product_details['shop_id'] = $shop->id;
+
+			// TODO: remove
+			$product_details['quantity'] = 0;
+
 			/**
 			 * @var Product
 			 */
 			$product = $shop->products()->lockForUpdate()
 				->firstOrCreate(
 					[
-						'code' => $code
+						'code' => $product_details['code']
 					],
-					[
-						'uuid' => Str::uuid(),
-						'name' => $validated['name'],
-
-						'price' => $validated['price'],
-						'quantity' => 0,
-
-						'discount' => $validated['discount'],
-
-						'image' => $validated['image_url'] ?? '',
-						'description' => $validated['description'],
-
-						// url Arrays
-						'desc_images' => $validated['descriptionImages'] ?? '[]',
-						'spec_images' => $validated['specificationsImages'] ?? '[]',
-						'pack_images' => $validated['deliveryImages'] ?? '[]',
-
-						'featured' => $validated['featured'],
-
-						'category_id' => $category->id,
-						'shop_id' => $shop->id
-					]
+					$product_details
 				);
 
 			$product->update([
-				'quantity' => $product->quantity + $validated['stock']
+				'quantity' => $product->quantity + $validated['quantity']
 			]);
 
 			return $product;
@@ -158,12 +143,26 @@ class ProductController extends Controller
 			return $product;
 		});
 
+		DB::transaction(function () use ($product, $validated) {
+			foreach ($validated['specifications'] as $spec) {
+				$product->specifications()->firstOrCreate(
+					[
+						'name' => $spec['name']
+					],
+					[
+						'value' => $spec['value'],
+						'product_id' => $product->id
+					]
+				);
+			}
+		});
+
 		/**
 		 * @var string
 		 */
 		$message = 'Produto criado com sucesso!';
 
-		if ($validated['stock'] > 1) {
+		if ($validated['quantity'] > 1) {
 			$message = 'Produtos criados com sucesso!';
 		}
 
@@ -196,27 +195,34 @@ class ProductController extends Controller
 	 */
 	public function update(UpdateProductRequest $request, Product $product)
 	{
-		Gate::authorize('update', Product::class);
+		Gate::authorize('update', $product);
 
 		$validated = $request->validated();
 
 		$shop = Auth::user()->shop;
 
-		if (isset($validated['category'])) {
-			/**
-			 * @var \App\Models\Category
-			 */
-			$category = $shop->categories()
-				->firstOrCreate(
-					[
-						'name' => $validated['category']
-					],
-					[
-						'slug' => Str::slug($validated['category']),
-						'shop_id' => $shop->id
-					]
-				);
-		}
+		$category_details = $validated['category'];
+		$category_details['shop_id'] = $shop->id;
+
+		/**
+		 * @var \App\Models\Category
+		 * TODO: fetch by id or name?
+		 */
+		$category = $shop->categories()
+			->firstOrCreate(
+				[
+					'name' => $category_details['name']
+				],
+				$category_details
+			);
+
+		DB::transaction(function () use ($product, $validated, $category) {
+
+			$product_details = $validated['product'];
+			$product_details['category_id'] = $category->id;
+
+			$product->update($product_details);
+		});
 
 		return response()->json([
 			'success' => true,

@@ -11,17 +11,9 @@ use Illuminate\Auth\Access\Response;
 class ConsignmentPolicy
 {
 
-	public function addProduct(User $user, Shop $shop, Consignment $consignment): bool
+	public function addProduct(User $user, Consignment $consignment): bool
 	{
-		if ($user->id !== $shop->user_id) {
-			return false;
-		}
-
-		if ($shop->id !== $consignment->shop_id) {
-			return false;
-		}
-
-		return true;
+		return $user->shop->exists() && $user->shop->id !== $consignment->shop_id;
 	}
 
 	/**

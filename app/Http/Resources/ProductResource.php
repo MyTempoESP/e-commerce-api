@@ -21,13 +21,18 @@ class ProductResource extends JsonResource
 			'price' => $this->price,
 			'stock' => $this->quantity,
 			'discount' => $this->discount,
-			'image' => $this->image,
+			'imageUrl' => $this->image,
 			'description' => $this->description,
-			'spec_images' => $this->spec_images,
-			'desc_images' => $this->desc_images,
-			'pack_images' => $this->pack_images,
+			'specificationsImages' => $this->spec_images,
+			'descriptionImages' => $this->desc_images,
+			'deliveryImages' => $this->pack_images,
 			'featured' => $this->featured,
-			'category' => $this->category->name
+			'category' => $this->category->name,
+			'specifications' => $this->specifications->toResourceCollection(),
+			'colors' => $this->customizations()->where(
+				'name',
+				'color'
+			)->first()->toResource(),
 		];
 	}
 }

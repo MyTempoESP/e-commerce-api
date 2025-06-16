@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Str;
 
 class CreateProductRequest extends FormRequest
 {
@@ -29,6 +31,54 @@ class CreateProductRequest extends FormRequest
 		return true;
 	}
 
+	public function prepareForValidation()
+	{
+		$data = [];
+
+		$specifications = [];
+
+		$product = [
+			'uuid' => Str::uuid(),
+			'name' => $this->input('name'),
+			'price' => $this->input('price'),
+			'image' => $this->input('image_url'),
+			'discount' => $this->input('discount'),
+			'description' => $this->input('description'),
+			'category' => $this->input('category'),
+			'featured' => $this->input('featured'),
+
+			'desc_images' => $this->input('descriptionImages', '[]'),
+			'spec_images' => $this->input('specificationsImages', '[]'),
+			'pack_images' => $this->input('deliveryImages', '[]'),
+		];
+
+		if ($this->has('category')) {
+			$data['category'] =
+				[
+					'name' => $this->input('category'),
+					'slug' => Str::slug($this->input('category')),
+				];
+		}
+
+		if (
+			$this->has('name') &&
+			$this->has('specifications')
+		) {
+			$product['code'] = Product::generateCode(
+				[
+					'name' => $this->input('name'),
+					'spec' => $this->input('specifications'),
+					'category' => $this->input('category')
+				]
+			);
+		}
+
+		$data['quantity'] = $this->input('stock', null);
+		$data['product'] = $product;
+
+		$this->merge($data);
+	}
+
 	/**
 	 * Get the validation rules that apply to the request.
 	 *
@@ -37,22 +87,28 @@ class CreateProductRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => 'required|string',
-			'price' => 'required',
-			'image_url' => '', // url
-			'category' => 'required|string',
-			'discount' => 'required',
-			'description' => 'max:300',
-			'stock' => 'required',
-			'descriptionImages' => '',
-			'specificationsImages' => '',
-			'deliveryImages' => '',
+			'product.code' => 'required',
+			'product.name' => 'required|string',
+			'product.uuid' => 'required',
+			'product.price' => 'required',
+			'product.discount' => 'required',
+			'product.description' => 'max:300',
+			'product.image' => '', // url
+			'product.desc_images' => '',
+			'product.spec_images' => '',
+			'product.pack_images' => '',
+			'product.featured' => 'required',
+
+			'category.name' => 'required|string',
+			'category.slug' => 'required|string',
+
+			'specifications' => 'required',
+
 			'colors' => 'required',
-			'allowCustomColorSelection' => 'required',
+			'quantity' => 'required',
 			'allowCustomName' => 'required',
 			'allowCustomModality' => 'required',
-			'featured' => 'required',
-			'specifications' => 'required',
+			'allowCustomColorSelection' => 'required',
 		];
 	}
 }

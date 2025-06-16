@@ -9,7 +9,6 @@ use App\Models\Address;
 use App\Models\Consignee;
 use App\Models\Consignment;
 use App\Models\Shop;
-use App\Models\Sku;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Exception;
@@ -34,31 +33,38 @@ class ConsignmentController extends Controller
 
 	public function addProduct(
 		AddProductToConsignmentRequest $request,
-		Shop $shop,
 		Consignment $consignment,
 	) {
-		Gate::authorize('addProduct', [$shop, $consignment]);
+		Gate::authorize('addProduct', $consignment);
+
+		$shop = Auth::user()->shop;
 
 		$validated = $request->validated();
 
-		// TODO: add locking
-		$sku = $shop->skus()->findOrFail($validated['sku_id']);
+		DB::transaction(function () use ($shop, $consignment, $validated) {
 
-		$req_quantity = $validated['quantity'];
+			$product = $shop->products()->lockForUpdate()->findOrFail($validated['product_id']);
 
-		if ($sku->quantity < $req_quantity) {
-			throw ValidationException::withMessages([
-				'quantity' => 'Quantidade requisitada maior que estoque'
-			]);
-		}
+			$req_quantity = $validated['quantity'];
 
-		DB::transaction(function () use ($sku, $req_quantity, $consignment) {
+			if ($product->quantity < $req_quantity) {
+				throw ValidationException::withMessages([
+					'quantity' => 'Quantidade requisitada maior que estoque'
+				]);
+			}
 
-			// TODO: WIP
-			//$consignment->skus()->attach();
+			$product->quantity = $product->quantity - $req_quantity;
 
-			$sku->quantity = $sku->quantity - $req_quantity;
-			$sku->save();
+			$product->save();
+
+			$consignment->products()->toggle(
+				[
+					$product->id => [
+						'quantity' => $req_quantity,
+						'price' => $product->price,
+					]
+				]
+			);
 		});
 	}
 
@@ -210,8 +216,10 @@ class ConsignmentController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(string $id)
+	public function destroy(Consignment $consignment)
 	{
-		//
+		Gate::authorize('delete', $consignment);
+
+		$consignment->delete();
 	}
 }

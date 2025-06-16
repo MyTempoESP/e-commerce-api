@@ -40,11 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
 	);
 
 	Route::post(
-		'/estabelecimentos/{shop}/remessas/{consignment}/produtos',
-		[ConsignmentController::class, 'addProduct'],
-	);
-
-	Route::post(
 		'/estabelecimentos',
 		[ShopController::class, 'store']
 	);
@@ -119,9 +114,9 @@ Route::middleware('auth:sanctum')->group(function () {
 		[ConsignmentController::class, 'update']
 	);
 
-	Route::get(
-		'/remessas/{consignment}/produtos',
-		[ProductController::class, 'consignmentIndex']
+	Route::delete(
+		'/remessas/{consignment}',
+		[ConsignmentController::class, 'destroy']
 	);
 
 	Route::post(
@@ -147,6 +142,16 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::delete(
 		'/produtos/{product}',
 		[ProductController::class, 'destroy']
+	);
+
+	Route::get(
+		'/remessas/{consignment}/produtos',
+		[ProductController::class, 'consignmentIndex']
+	);
+
+	Route::post(
+		'/remessas/{consignment}/produtos',
+		[ConsignmentController::class, 'addProduct'],
 	);
 });
 

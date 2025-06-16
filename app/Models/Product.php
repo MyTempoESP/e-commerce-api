@@ -43,7 +43,7 @@ class Product extends Model
 	public static function generateCode(array $fields): string
 	{
 		return $fields['name'] . $fields['category'] .
-			'-' . collect($fields['specifications'])
+			'-' . collect($fields['spec'])
 				->map(fn($spec) => $spec['value'])
 				->implode('.');
 	}
@@ -68,5 +68,10 @@ class Product extends Model
 	public function customizations()
 	{
 		return $this->hasMany(Customization::class);
+	}
+
+	public function specifications()
+	{
+		return $this->hasMany(Specification::class);
 	}
 }
